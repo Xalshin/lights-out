@@ -1,11 +1,10 @@
 package coding.challenge.grid;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 import java.util.stream.Collectors;
 
-import coding.challenge.grid.element.Light;
-
-public class LightLine extends Vector<Light>{
+public class LightLine extends HashMap<Integer, Boolean>{
 
 	/**
 	 * 
@@ -14,9 +13,8 @@ public class LightLine extends Vector<Light>{
 	
 	private int indexY;
 	
-	public LightLine(int indexY) {
+	public LightLine() {
 		super();
-		this.indexY = indexY;
 	}
 	
 	public void turnOnOffOrToggle(int indexXStart, int indexXStop, Boolean onOff) {
@@ -26,28 +24,24 @@ public class LightLine extends Vector<Light>{
 			defaultValue = onOff;
 		}
 		
-		Vector<Light> temp = new Vector<>();
+		Map<Integer,Boolean> temp = new HashMap<>();
 		for(int i = indexXStart ; i <= indexXStop; i++) {
-			temp.add(new Light(defaultValue, i));
+			temp.put(i, defaultValue);
 		}
 		
-		Set<Light> alreadyExistingLights = stream().filter(light -> light.getIndex() >= indexXStart && light.getIndex() <= indexXStop).collect(Collectors.toSet());
+		Set<Integer> alreadyExistingLights = keySet().stream().filter(index -> index >= indexXStart && index <= indexXStop).collect(Collectors.toSet());
 		
-		for(Light existing : alreadyExistingLights) {
-			existing.setTurnedOn(onOff != null ? onOff :!existing.isTurnedOn());
-			temp.set(existing.getIndex() - indexXStart, existing);
+		for(Integer existingIndex : alreadyExistingLights) {
+			temp.put(existingIndex - indexXStart, onOff != null ? onOff :!get(existingIndex));
 		}
-		this.removeAll(alreadyExistingLights);
 		
-		Set<Light> alreadyExistingLowerIndexLights = stream().filter(light -> light.getIndex() < indexXStart).collect(Collectors.toSet());
-		this.removeAll(alreadyExistingLowerIndexLights);
-		
-		Set<Light> alreadyExistingHigherIndexLights = stream().filter(light -> light.getIndex() > indexXStop).collect(Collectors.toSet());
+		Map<Integer, Boolean> alreadyExistingLowerIndexLights = entrySet().stream().filter(entry -> entry.getKey() < indexXStart).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+		Map<Integer, Boolean> alreadyExistingHigherIndexLights =entrySet().stream().filter(entry -> entry.getKey() > indexXStop).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
 		
 		this.clear();
-		this.addAll(alreadyExistingLowerIndexLights);
-		this.addAll(temp);
-		this.addAll(alreadyExistingHigherIndexLights);
+		this.putAll(alreadyExistingLowerIndexLights);
+		this.putAll(temp);
+		this.putAll(alreadyExistingHigherIndexLights);
 	}
 
 	public int getIndex() {
@@ -55,7 +49,7 @@ public class LightLine extends Vector<Light>{
 	}
 
 	public long getNumberOfLightsOn() {
-		return stream().filter(Light::isTurnedOn).count();
+		return entrySet().stream().filter(entry -> entry.getValue()).count();
 	}
 	
 	

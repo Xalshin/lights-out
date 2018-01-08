@@ -1,9 +1,9 @@
 package coding.challenge.grid;
-import java.util.Set;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-public class LightGrid extends Vector<LightLine>{
+public class LightGrid extends HashMap<Integer,LightLine>{
 
 	/**
 	 * 
@@ -11,31 +11,28 @@ public class LightGrid extends Vector<LightLine>{
 	private static final long serialVersionUID = 1L;
 	public void turnOnOffOrToggleGrid(int indexStartX, int indexStartY, int indexStopX, int indexStopY, Boolean onOff) {
 		
-		Vector<LightLine> temp = new Vector<>();
+		Map<Integer,LightLine> temp = new HashMap<>();
 		
 		for(int i = indexStartY ; i <= indexStopY; i++) {
-			LightLine line = new LightLine(i);
+			LightLine line = new LightLine();
 			line.turnOnOffOrToggle(indexStartX, indexStopX, onOff);
-			temp.add(line);
+			temp.put(i,line);
 		}
 		
-		Set<LightLine> alreadyExistingLines = stream().filter(light -> light.getIndex() >= indexStartY && light.getIndex() <= indexStopY).collect(Collectors.toSet());
-		for(LightLine existing : alreadyExistingLines) {
-			existing.turnOnOffOrToggle(indexStartX, indexStopX, onOff);
-			temp.set(existing.getIndex() - indexStartY, existing);
+		Map<Integer,LightLine> alreadyExistingLines = entrySet().stream().filter(entry -> entry.getKey() >= indexStartY &&  entry.getKey() <= indexStopY).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+		for(Entry<Integer, LightLine> existing : alreadyExistingLines.entrySet()) {
+			existing.getValue().turnOnOffOrToggle(indexStartX, indexStopX, onOff);
+			temp.put(existing.getKey() - indexStartY, existing.getValue());
 		}
 		
-		this.removeAll(alreadyExistingLines);
+		Map<Integer,LightLine> alreadyExistingLowerIndexLines = entrySet().stream().filter(entry -> entry.getKey() < indexStartY).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
 		
-		Set<LightLine> alreadyExistingLowerIndexLines = stream().filter(light -> light.getIndex() < indexStartY).collect(Collectors.toSet());
-		this.removeAll(alreadyExistingLowerIndexLines);
-		
-		Set<LightLine> alreadyExistingHigherIndexLines = stream().filter(light -> light.getIndex() < indexStopY).collect(Collectors.toSet());
+		Map<Integer,LightLine> alreadyExistingHigherIndexLines = entrySet().stream().filter(entry -> entry.getKey() < indexStopY).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
 		
 		this.clear();
-		this.addAll(alreadyExistingLowerIndexLines);
-		this.addAll(temp);
-		this.addAll(alreadyExistingHigherIndexLines);
+		this.putAll(alreadyExistingLowerIndexLines);
+		this.putAll(temp);
+		this.putAll(alreadyExistingHigherIndexLines);
 		
 	}
 	public void toggle(int indexStartX, int indexStartY, int indexStopX, int indexStopY) {
@@ -48,8 +45,8 @@ public class LightGrid extends Vector<LightLine>{
 	
 	public long getNumberOfLightsOn() {
 		long numberLightOn = 0;
-		for(int i = 0; i <size(); i++) {
-			numberLightOn += get(i).getNumberOfLightsOn();
+		for(Entry<Integer, LightLine> entry : entrySet()) {
+			numberLightOn += entry.getValue().getNumberOfLightsOn();
 		}
 		return numberLightOn;
 	}
