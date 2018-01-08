@@ -1,12 +1,13 @@
+
 import coding.challenge.grid.LightGrid;
+import coding.challenge.instructions.reader.InstructionReader;
 
 public class Main {
 
 	public static void main(String[] args) {
-		
-		
-		LightGrid grid = new LightGrid();
-		grid.toggle(461,550,564,900);
+	
+		LightGrid  result = InstructionReader.readAndExecuteInstructions("instructions.txt");
+		System.out.println(result.getNumberOfLightsOn());
 
 	}
 
