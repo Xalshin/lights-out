@@ -1,4 +1,4 @@
-
+import coding.challenge.grid.LightGrid;
 
 public class Main {
 
@@ -7,8 +7,6 @@ public class Main {
 		
 		LightGrid grid = new LightGrid();
 		grid.toggle(461,550,564,900);
-		
-		System.out.println(grid.get(350).getIndex());
 
 	}
 

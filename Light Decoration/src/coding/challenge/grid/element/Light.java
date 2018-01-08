@@ -1,8 +1,5 @@
-/**
- * 
- * @author Chien
- *
- */
+package coding.challenge.grid.element;
+
 public class Light {
 	private boolean turnedOn = false;
 	private int index;

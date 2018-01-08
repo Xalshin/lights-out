@@ -1,6 +1,9 @@
+package coding.challenge.grid;
 import java.util.List;
 import java.util.Vector;
 import java.util.stream.Collectors;
+
+import coding.challenge.grid.element.Light;
 
 public class LightLine extends Vector<Light>{
 
