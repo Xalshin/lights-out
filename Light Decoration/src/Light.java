@@ -1,4 +1,8 @@
-
+/**
+ * 
+ * @author Chien
+ *
+ */
 public class Light {
 	private boolean turnedOn = false;
 	private int index;
